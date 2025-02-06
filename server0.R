@@ -22,29 +22,12 @@ server <- function(input, output, session) {
   
   # Handle new chat button
   observeEvent(input$new_chat, {
-    print("New Chat button pressed") # Debug print
-    
-    # Create a new chat instance
+    # First clear the chat UI
+    chat_clear("chat")
+    # Then create a new chat instance
     isolate({
-      new_chat <- initialize_chat(input)
-      print("New chat initialized") # Debug print
-      chat_instance(new_chat)
+      chat_instance(initialize_chat(input))
     })
-    
-    # Clear the input field
-    updateTextAreaInput(session, "chat_user_input", value = "")
-    
-    # Force UI refresh
-    output$chat_ui <- renderUI({
-      # Assuming you have a chat_ui output in your UI
-      div(
-        id = "chat-container",
-        # Add any initial chat UI elements here
-        textAreaInput("chat_user_input", "Enter your message:", width = "100%"),
-        actionButton("send", "Send")
-      )
-    })
-    
   }, ignoreInit = TRUE)
   
   # Update project list when new projects are added
@@ -55,5 +38,6 @@ server <- function(input, output, session) {
                       choices = projects,
                       selected = input$current_project)
   })
-  
+
 }
+
